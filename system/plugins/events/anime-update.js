@@ -6,7 +6,7 @@ let messageSent = false;
 
 async function events(m, {
     sock,
-    store
+    store,
     config
 }) {
    let settings = db.list().settings
