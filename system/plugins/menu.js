@@ -80,13 +80,13 @@ Nama saya nekoBot - , Berikut list command bot ini
 
 ┏━━[ *乂 M e n u - O t h e r* ]
 ${matches.map((a, i) => `┃ *${i + 1}.* ${m.prefix + a}`).join("\n")} 
-┗━━━━━━━━━━━━━━━━━━━━━━━`;
+┗━━━━━━━━━━━━━━━━━━━━━━━\n`;
             Object.entries(menu).forEach(([tag, commands]) => {
                 caption += `\n┏━━[ *乂 M e n u – ${tag.split("").join(" ").capitalize()}* ]\n`;
                 commands.command.forEach((command, index) => {
                     caption += `┃ *${index + 1}.* ${m.prefix + command.name} ${command.settings?.premium ? "*[P]*" : command.settings?.limit ? "*[L]*" : ""}\n`;
                 });
-               caption += "┗━━━━━━━━━━━━━━━━━━━━━━━\n"
+                caption += "┗━━━━━━━━━━━━━━━━━━━━━━━\n"
             });
             caption += "\n\n> © Developed by AxellNetwork\n> Powered by @⁨WhatsApp⁩";
             m.reply({
@@ -133,10 +133,10 @@ Nama saya nekoBot - , Berikut list command bot ini
             caption += list.command
                 .map(
                     (a, i) =>
-                    `] *${i + 1}.* ${m.prefix + a.name} ${a.settings?.premium ? "*[P]*" : a.settings?.limit ? "*[L]*" : ""}`,
+                    `┃ *${i + 1}.* ${m.prefix + a.name} ${a.settings?.premium ? "*[P]*" : a.settings?.limit ? "*[L]*" : ""}`,
                 )
                 .join("\n");
-            caption + "\n┗━━━━━━━━━━━━━━━━━━━━━━━"
+            caption += "\n┗━━━━━━━━━━━━━━━━━━━━━━━"
             caption += "\n\n> © Developed by AxellNetwork\n> Powered by @⁨WhatsApp⁩";
             m.reply({
                 text: caption,

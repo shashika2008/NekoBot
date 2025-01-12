@@ -253,27 +253,18 @@
       };
     }
     sock.ev.on("messages.upsert", async (cht) => {
+     console.log(cht);
       if (cht.messages.length === 0) return;
       const chatUpdate = cht.messages[0];
       if (!chatUpdate.message) return;
       const userId = chatUpdate.key.id;
-      if (Object.keys(store.groupMetadata).length === 0) {
-        return store.groupMetadata = await sock.groupFetchAllParticipating();
-      }
-      messageQueue.add(userId, chatUpdate);
-      if (!messageQueue.processing[userId]) {
-        messageQueue.processQueue(userId, async (message) => {
-          message.message =
-            Object.keys(message.message)[0] === "ephemeralMessage"
-              ? message.message.ephemeralMessage.message
-              : message.message;
-          global.m = await serialize(message, sock, store);
-          if (m.isBot && m.fromMe) return;
+          console.log(chatUpdate);
+          global.m = await serialize(chatUpdate, sock, store);
+          console.log(m)
+          if (m.isBot) return 
           if (!m.isOwner && db.list().settings.self) return;
           await require("./system/handler.js")(m, sock, store);
           await require("./system/case.js")(m, sock, store);
-        });
-      }
     });
     async function getMessage(key) {
       if (store) {
