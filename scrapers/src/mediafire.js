@@ -14,7 +14,7 @@ async function mediafire(url) {
         const type = $(".dl-btn-cont").find(".icon").attr("class").split("archive")[1].trim();
         const filename = $(".dl-btn-label").attr("title");
         const size = $('.download_link .input').text().trim().match(/\((.*?)\)/)[1];
-        const ext = filename.split(".")[1].trim()
+        const ext = filename.split(".").pop();
         const mimetype =
             lookup(ext.toLowerCase()) || "application/" + ext.toLowerCase();
         const download = $(".input").attr("href");
