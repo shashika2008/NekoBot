@@ -1,27 +1,10 @@
 const undici = require("undici");
 const {
-    extension
-} = require("mime-types");
-const {
     html
 } = require("js-beautify");
-
-
-const headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-    'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
-    'Accept-Encoding': 'gzip, deflate',
-    'Connection': 'keep-alive',
-    'Upgrade-Insecure-Requests': '1',
-    'Cache-Control': 'max-age=0',
-    'Sec-Fetch-Dest': 'document',
-    'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'none',
-    'Sec-Fetch-User': '?1',
-};
-
-const timeout = 10000;
+const {
+    extension
+} = require("mime-types");
 
 module.exports = {
     command: "get",
@@ -37,24 +20,17 @@ module.exports = {
     }) {
         if (!text) throw `> Masukan atau reply url yang ingin kamu ambil data nya`;
         const urls = isUrl(text);
-        if (!urls) return m.reply("Invalid URL");
+        if (!urls) throw `> Masukan atau reply url yang ingin kamu ambil data nya`;
 
         for (const url of urls) {
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), timeout);
-                const response = await undici.fetch(url, {
-                    headers,
-                    signal: controller.signal,
-                });
-                clearTimeout(timeoutId);
-
+                const response = await undici.fetch(url);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const mime = response.headers.get("content-type").split(";")[0];
-                const cap = `*– 乂 Fetch - Url* > *- Request :* ${url}`;
+                const cap = `*– 乂 Fetch - Url*\n> *- Request :* ${url}`;
                 let body;
 
                 if (/\html/gi.test(mime)) {
