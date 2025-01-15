@@ -4,6 +4,7 @@ const config = {
   owner: ["6282114275683", "6281910094713"],
   name: "- NekoBot - Simple WhatsApp bot",
   sessions: "sessions",
+  prefix: [".", "?", "!"], //Tambahin sendiri prefix nya kalo kurang
   sticker: {
     packname: "Made by ",
     author: "nekoBot",
