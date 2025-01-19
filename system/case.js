@@ -16,21 +16,114 @@ const {
 const pkg = require("../lib/case");
 const Case = new pkg("./system/case.js");
 
-module.exports = async(m,
-            sock,
-            config,
-            text,
-            Func,
-            Scraper,
-            Uploader,
-            store,
-            isAdmin,
-            botAdmin,
-            isPrems,
-            isBanned,
-            ) => {
+module.exports = async (m,
+    sock,
+    config,
+    text,
+    Func,
+    Scraper,
+    Uploader,
+    store,
+    isAdmin,
+    botAdmin,
+    isPrems,
+    isBanned,
+) => {
     const quoted = m.isQuoted ? m.quoted : m;
     switch (m.command) {
+        case "brat": {
+            const {
+                execSync
+            } = require("child_process");
+            const fs = require("fs");
+            const path = require("path");
+            let input = m.isQuoted ? m.quoted.body : text;
+            if (!input) return m.reply("> Reply/Masukan pessn");
+            m.reply(config.messages.wait);
+            if (m.text.includes("--animated")) {
+                let txt = input.replace("--animated", "").trim().split(" ");
+                let array = []
+                for (let i = 0; i < txt.length; i++) {
+                    let word = txt.slice(0, i + 1).join(" ");
+                    let media = await axios.get(`https://aqul-brat.hf.space/api/brat?text=${encodeURIComponent(word)}`, {
+                        responseType: 'arraybuffer'
+                    }).then((a) => a.data);
+                    let tmpDir = path.resolve(`./tmp/brat_${i}-${Date.now()}.mp4`);
+                    fs.writeFileSync(tmpDir, media);
+                    array.push(tmpDir);
+                }
+                let fileTxt = path.resolve(`./tmp/cmd-${Date.now()}.txt`);
+                let content = ""
+                for (let i = 0; i < array.length; i++) {
+                    content += `file '${array[i]}'\n`;
+                    content += `duration 0.5\n`;
+                }
+                content += `file '${array[array.length - 1]}'\n`;
+                content += `duration 3\n`;
+                fs.writeFileSync(fileTxt, content);
+                let output = path.resolve(`./tmp/output-${Date.now()}.mp4`);
+                execSync(`ffmpeg -y -f concat -safe 0 -i ${fileTxt} -vf "fps=30" -c:v libx264 -preset veryfast -pix_fmt yuv420p -t 00:00:10 ${output}`);
+                let sticker = await writeExif({
+                    mimetype: "video",
+                    data: fs.readFileSync(output),
+                }, {
+                    packName: config.sticker.packname,
+                    packPublish: config.sticker.author,
+                });
+                fs.unlinkSync(output);
+                fs.unlinkSync(fileTxt);
+                await m.reply({
+                    sticker
+                });
+            } else {
+                let media = await axios.get(`https://aqul-brat.hf.space/api/brat?text=${encodeURIComponent(text)}`, {
+                    responseType: 'arraybuffer'
+                }).then((a) => a.data);
+                let sticker = await writeExif({
+                    mimetype: "image",
+                    data: media,
+                }, {
+                    packName: config.sticker.packname,
+                    packPublish: config.sticker.author,
+                }, );
+
+                await m.reply({
+                    sticker
+                });
+            }
+        }
+        break;
+
+
+
+
+
+
+
+
+
+
+        case 'gpt4o': {
+            const axios = require("axios");
+            if (!text) return m.reply(`Contoh: ${m.prefix + m.command} <teks user>`);
+
+            try {
+                const response = await axios.get(`https://api.rifandavinci.my.id/aillm/gpt4o?text=${encodeURIComponent(text)}`, {
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+
+                const result = response.data.result;
+
+                await m.reply(result);
+            } catch (error) {
+                console.error(error);
+                m.reply('error wak.');
+            }
+        }
+        break;
+
         case "jadwalsholat": {
             const axios = require('axios');
             const cheerio = require('cheerio');
@@ -70,26 +163,7 @@ module.exports = async(m,
             }
         };
         break
-        case "brat": {
-            let input = m.isQuoted ? m.quoted.body : text;
-            if (!input) return m.reply("> Reply/Masukan pessn");
-            m.reply(config.messages.wait);
-            let media = await axios.get(`https://aqul-brat.hf.space/api/brat?text=${text}`, {
-                responseType: 'arraybuffer'
-            }).then((a) => a.data);
-            let sticker = await writeExif({
-                mimetype: "image",
-                data: media,
-            }, {
-                packName: config.sticker.packname,
-                packPublish: config.sticker.author,
-            }, );
 
-            await m.reply({
-                sticker
-            });
-        }
-        break;
         case "daftar": {
             let user = db.list().user[m.sender]
             if (user.register) return m.reply("> Kamu sudah mendaftar !");

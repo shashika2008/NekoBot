@@ -1,7 +1,7 @@
 const {
     delay
 } = require("baileys");
-const DELAY = 4000; // - Delay broadcast.js
+const DELAY = 10000;
 
 module.exports = {
     command: "broadcast",
@@ -29,16 +29,16 @@ module.exports = {
             let q = m.quoted ? m.quoted : m;
             let Msg = sock.cMod(m.cht, q, input);
             for (let i of isGROUP) {
-                sock.copyNForward(i, Msg, true);
-                delay(DELAY);
+                await sock.copyNForward(i, Msg, true);
+                await delay(DELAY);
             }
             m.reply(`> *- Berhasil broadcast ke ${isGROUP.length} group*`);
         } else {
             let q = m.quoted ? m.quoted : m;
             let Msg = sock.cMod(m.cht, q, m.text);
             for (let i of isSENDER) {
-                sock.copyNForward(i, Msg, true);
-                delay(DELAY);
+                await sock.copyNForward(i, Msg, true);
+                await delay(DELAY);
             }
             m.reply(`> *- Berhasil broadcast ke ${isSENDER.length} orang*`);
         }

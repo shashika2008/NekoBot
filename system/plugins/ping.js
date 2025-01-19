@@ -16,7 +16,7 @@ module.exports = {
             node = process.memoryUsage(),
             info = await fetch("https://ipwho.is").then((a) => a.json()),
             cap = `\`Bot Information\`
-* Running On : ${process.env.username === "root" ? "VPS" : "HOSTING ( PANEL )"}
+* Running On : ${process.env.username === "root" ? "VPS" : process.env.username === "container" ? "HOSTING ( PANEL )" : process.env.username}
 * Uptime : ${Func.toDate(process.uptime() * 1000)}
 * Home Dir : ${os.homedir}
 * Tmp Dir : ${os.tmpdir()} *( ${fs.readdirSync(process.cwd() + os.tmpdir).length} Files )*
@@ -32,7 +32,7 @@ module.exports = {
 * Flag : ${info.flag.emoji}
 * Timezone : ${info.timezone.id}
 
-\`Origin Server Informationr\`
+\`Origin Server Information\`
 * Speed : ${(performance.now() - start).toFixed(3)} ms
 * Uptime : ${Func.toDate(os.uptime() * 1000)}
 * Total Memory : ${Func.formatSize(os.totalmem() - os.freemem())} / ${Func.formatSize(os.totalmem())}

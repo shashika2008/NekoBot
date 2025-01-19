@@ -185,71 +185,16 @@ ${list.map((a) => `┃${m.prefix}menu ${a}`).join("\n")}
 
 > © Developed by AxellNetwork\n> Powered by @⁨WhatsApp⁩`;
             m.reply({
-                image: {
-                    url: "https://files.catbox.moe/yupd7z.jpg"
+                video: {
+                    url: "https://files.catbox.moe/9z9y4g.mp4"
                 },
                 caption,
+                mentions: [m.sender],
+                gifPlayback: true,
                 footer: config.name,
                 contextInfo: {
                     mentionedJid: [m.sender]
-                },
-                buttons: [{
-                    buttonId: 'action',
-                    buttonText: {
-                        displayText: '📁 LIST - MENU'
-                    },
-                    type: 4,
-                    nativeFlowInfo: {
-                        name: 'single_select',
-                        paramsJson: JSON.stringify({
-                            title: '☘️ Menu – NekoBot',
-                            sections: [{
-                                title: "- ℹ️ INFO - BOT",
-                                rows: [{
-                                    header: '👨‍💻 Server Bot',
-                                    title: 'Menampilkan Informasi Server',
-                                    description: config.name,
-                                    id: 'ping',
-                                }, {
-                                    header: '🤖 Script bot',
-                                    title: 'Script bot Gratis !',
-                                    description: config.name,
-                                    id: '.script',
-                                }]
-                            }, {
-                                title: "- ☘️ Anime - Service",
-                                rows: [{
-                                    header: 'SOKUJA - SERVICE ',
-                                    title: 'Cek Informasi Anime dari sokuja',
-                                    description: config.name,
-                                    id: '.sokuja',
-                                }, {
-                                    header: 'KURONIME - SERVICE ',
-                                    title: 'Cek Informasi Anime dari kuronime',
-                                    description: config.name,
-                                    id: '.kuronime',
-                                }]
-                            }, {
-                                title: "- 🍟 List - Category",
-                                rows: [{
-                                        header: '📁 Category ALL',
-                                        title: 'Menampilkan Semua fitur',
-                                        description: config.name,
-                                        id: '.menu all',
-                                    },
-                                    ...list.map((a) => ({
-                                        header: `📁 Category ${a.toUpperCase()}`,
-                                        title: `Menampilkan fitur ${a}`,
-                                        description: config.name,
-                                        id: `.menu ${a}`,
-                                    }))
-                                ],
-                            }],
-                        }),
-                    },
-                }, ],
-                headerType: 1,
-                viewOnce: true
+                }
             });
         }
     },

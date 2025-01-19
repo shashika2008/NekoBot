@@ -28,11 +28,10 @@ async function events(m, {
                 caption += `\n\n*- Share the Channel :*\n> https://whatsapp.com/channel/0029VaxNm957dmeaROxJiU36\n*- Join Group Komunitas kami :*\n> https://chat.whatsapp.com/GkigkWVWbyyGe5PyAbXreR`;
 
                 if (!messageSent) {
-                    await sock.sendMessage(config?.id?.group, {
+                    await sock.sendMessage(config.id.group, {
                         image: {
                             url: latestAnime[0].thumbnail
                         },
-                        mentions: metadata.participants.map((a) => a.id),
                         caption
                     }).then((msg) => {
                         for (let id of Object.keys(store.groupMetadata)) {
