@@ -5,22 +5,20 @@ module.exports = {
     settings: {
         limit: true,
     },
-    description: "Tingkatkan kualitas Photo mu !",
+    description: "Jernihkan dan tingkatkan kualitas foto favoritmu dengan mudah!",
     loading: true,
-    async run(m, {
-        sock,
-        Scraper,
-        Func
-    }) {
-        let q = m.quoted ? m.quoted : m;
-        if (!/image/.test(q.msg.mimetype) || !q.isMedia)
-            throw `> Reply/Kirim photo yang mau di jernihkan`;
-        let buffer = await q.download();
-        let data = await Scraper.remini(buffer);
-        let size = Func.formatSize(data.length);
+    async run(m, { Scraper, Func }) {
+        let target = m.quoted ? m.quoted : m;
+        if (!/image/.test(target.msg.mimetype) || !target.isMedia) 
+            throw "⚠️ *Oops!* Harap kirim atau balas sebuah foto yang ingin dijernihkan.";
+
+        let buffer = await target.download();
+        let enhancedImage = await Scraper.remini(buffer);
+        let size = Func.formatSize(enhancedImage.length);
+
         m.reply({
-            image: data,
-            caption: `*– 乂 Remini - Image*\n> *- Ukuran photo :* ${size}`,
+            image: enhancedImage,
+            caption: `✨ *Remini - Photo Enhancer* ✨\n\n🖼️ *Foto telah berhasil dijernihkan!*\n📂 *Ukuran file hasil:* ${size}\n\n💡 *Tips:* Gunakan foto dengan kualitas dasar yang cukup baik untuk hasil terbaik.`,
         });
     },
 };

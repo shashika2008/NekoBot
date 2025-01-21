@@ -53,49 +53,63 @@ module.exports = {
         });
         let premium = db.list().user[m.sender].premium.status;
         let limit = db.list().user[m.sender].limit;
+
+        const header = `☘️ *N E K O – B O T*
+👋 Hai nama saya NekoBot saya adalah asisten bot WhatsApp 
+yang akan membantu anda dengan fitur yang sediakan !
+─────────────────────────
+        `;
+
+        const footer = `
+📢 *Jika Anda menemui masalah*
+*hubungi developer bot.*
+💻 *Script bot:* https://github.com/AxellNetwork/NekoBot
+🤖 *Didukung oleh WhatsApp*
+🌐 *Saluran WhatsApp NekoBot :*
+https://whatsapp.com/channel/0029Vb0YWvYJ3jusF2nk9U1P
+
+> 💬 *Fitur Limit*: 🥈
+> 💎 *Fitur Premium*: 🥇
+─────────────────────────
+`;
+
         if (text === "all") {
-            let caption = `*🍟 Selamat datang di Dashboard bot*
-Nama saya nekoBot - , Berikut list command bot ini
+            let caption = `${header} 
+🎮🎮 *Info Pengguna*:
+> - 🧑‍💻 Nama: ${m.pushName}
+> - 🏷️ Tag: @${m.sender.split("@")[0]}
+> - 🎖️ Status: ${m.isOwner ? "Developer" : premium ? "Premium" : "Gratis"}
+> - ⚖️ Limit: ${m.isOwner ? "Tidak terbatas" : limit}
 
-┏━━[ *乂 Info User* ]
-┃ *- Nama :* ${m.pushName}
-┃ *- Tag :* @${m.sender.split("@")[0]}
-┃ *- Status :* ${m.isOwner ? "Developer bot" : premium ? "Premium" : "Gratisan"}
-┃  *- Limit :* ${m.isOwner ? "Unlimited" : limit}
-┗━━━━━━━━━━━━━━━━━━━━━━━
+🤖 *Info Bot*:
+> - 🏷️ Nama: ${pkg.name}
+> - 🔢 Versi: v${pkg.version}
+> - 🕰️ Waktu Aktif: ${Func.toDate(process.uptime() * 1000)}
+> - 🔑 Prefix: [ ${m.prefix} ]
+> - ⚡ Total perintah: ${cmd + alias + matches.length}
 
-┏━━[ *乂 Info - Bot* ]
-┃ *- Nama :* ${pkg.name}
-┃ *- Versi :* v${pkg.version}
-┃ *- Runtime :* ${Func.toDate(process.uptime() * 1000)}
-┃ *- Prefix :* [ ${m.prefix} ]
-┃ *- Total fitur :* ${cmd + alias + matches.length}
-┗━━━━━━━━━━━━━━━━━━━━━━━
-> *\`- Source code :\`* https://github.com/AxellNetwork/NekoBot
+  
+🛠️ *msnu – OTHER* 
+${matches.map((a, i) => `> *(${i + 1})* ${m.prefix + a}`).join("\n")}
+─────────────────────────
+`;
 
-> *- Fitur Limit :* [L]
-> *- Fitur Premium :* [P]
-
-☎️ Jika menemukan bug pada bot ini bisa langsung hubungi owner bot
-
-┏━━[ *乂 M e n u - O t h e r* ]
-${matches.map((a, i) => `┃ *${i + 1}.* ${m.prefix + a}`).join("\n")} 
-┗━━━━━━━━━━━━━━━━━━━━━━━\n`;
             Object.entries(menu).forEach(([tag, commands]) => {
-                caption += `\n┏━━[ *乂 M e n u – ${tag.split("").join(" ").capitalize()}* ]\n`;
-                commands.command.forEach((command, index) => {
-                    caption += `┃ *${index + 1}.* ${m.prefix + command.name} ${command.settings?.premium ? "*[P]*" : command.settings?.limit ? "*[L]*" : ""}\n`;
-                });
-                caption += "┗━━━━━━━━━━━━━━━━━━━━━━━\n"
+                caption += `\n🛠️ *Menu – ${tag.toUpperCase()}* 
+${commands.command.map((command, index) => `> *(${index + 1})* ${m.prefix + command.name} ${command.settings?.premium ? "🥇" : command.settings?.limit ? "🥈" : ""}`).join("\n")}
+─────────────────────────
+`;
             });
-            caption += "\n\n> © Developed by AxellNetwork\n> Powered by @⁨WhatsApp⁩";
+
+            caption += footer;
+
             m.reply({
                 text: caption,
                 contextInfo: {
                     mentionedJid: sock.parseMention(caption),
                     externalAdReply: {
                         title: "© NekoBot | Playground",
-                        body: "Better WhatsApp bot",
+                        body: "👨‍💻 Bot WhatsApp - Simple",
                         mediaType: 1,
                         sourceUrl: "https://whatsapp.com/channel/0029Vb0YWvYJ3jusF2nk9U1P",
                         thumbnailUrl: "https://files.catbox.moe/yupd7z.jpg",
@@ -105,46 +119,40 @@ ${matches.map((a, i) => `┃ *${i + 1}.* ${m.prefix + a}`).join("\n")}
             });
         } else if (Object.keys(menu).find((a) => a === text.toLowerCase())) {
             let list = menu[Object.keys(menu).find((a) => a === text.toLowerCase())];
-            let caption = `*🍟 Selamat datang di Dashboard bot*
-Nama saya nekoBot - , Berikut list command bot ini
+            let caption = `${header}
+🎮 *Info Pengguna*:
+> - 🧑‍💻 Nama: ${m.pushName}
+> - 🏷️ Tag: @${m.sender.split("@")[0]}
+> - 🎖️ Status: ${m.isOwner ? "Developer" : premium ? "Premium" : "Gratis"}
+> - ⚖️ Limit: ${m.isOwner ? "Tidak terbatas" : limit}
 
-┏━━[ *乂 Info User* ]
-┃ *- Nama :* ${m.pushName}
-┃ *- Tag :* @${m.sender.split("@")[0]}
-┃ *- Status :* ${m.isOwner ? "Developer bot" : premium ? "Premium" : "Gratisan"}
-┃  *- Limit :* ${m.isOwner ? "Unlimited" : limit}
-┗━━━━━━━━━━━━━━━━━━━━━━━
+🤖 *Info Bot*:
+> - 🏷️ Nama: ${pkg.name}
+> - 🔢 Versi: v${pkg.version}
+> - 🕰️ Waktu Aktif: ${Func.toDate(process.uptime() * 1000)}
+> - 🔑 Prefix: [ ${m.prefix} ]
+> - ⚡ Total perintah: ${cmd + alias + matches.length}
 
-┏━━[ *乂 Info - Bot* ]
-┃ *- Nama :* ${pkg.name}
-┃ *- Versi :* v${pkg.version}
-┃ *- Runtime :* ${Func.toDate(process.uptime() * 1000)}
-┃ *- Prefix :* [ ${m.prefix} ]
-┃ *- Total fitur :* ${cmd + alias + matches.length}
-┗━━━━━━━━━━━━━━━━━━━━━━━
-> *\`- Source code :\`* https://github.com/AxellNetwork/NekoBot
-
-> *- Fitur Limit :* [L]
-> *- Fitur Premium :* [P]
-
-☎️ Jika menemukan bug pada bot ini bisa langsung hubungi owner bot
-
-┏━━[ *乂 M e n u - ${text.capitalize().split("").join(" ")}* ]\n`;
-            caption += list.command
+─────────────────────────
+🛠️ *Menu – ${text.toUpperCase()}*
+${list.command
                 .map(
                     (a, i) =>
-                    `┃ *${i + 1}.* ${m.prefix + a.name} ${a.settings?.premium ? "*[P]*" : a.settings?.limit ? "*[L]*" : ""}`,
+                    `> *(${i + 1})* ${m.prefix + a.name} ${a.settings?.premium ? "🥇" : a.settings?.limit ? "🥈" : ""}`,
                 )
-                .join("\n");
-            caption += "\n┗━━━━━━━━━━━━━━━━━━━━━━━"
-            caption += "\n\n> © Developed by AxellNetwork\n> Powered by @⁨WhatsApp⁩";
+                .join("\n")}
+─────────────────────────
+`;
+
+            caption += footer;
+
             m.reply({
                 text: caption,
                 contextInfo: {
                     mentionedJid: sock.parseMention(caption),
                     externalAdReply: {
                         title: "© NekoBot | Playground",
-                        body: "Better WhatsApp bot",
+                        body: "👨‍💻 Bot WhatsApp - Simple",
                         mediaType: 1,
                         sourceUrl: "https://whatsapp.com/channel/0029Vb0YWvYJ3jusF2nk9U1P",
                         thumbnailUrl: "https://files.catbox.moe/yupd7z.jpg",
@@ -154,47 +162,43 @@ Nama saya nekoBot - , Berikut list command bot ini
             });
         } else {
             let list = Object.keys(menu);
-            let caption = `*🍟 Selamat datang di Dashboard bot*
-Nama saya nekoBot - , Berikut list command bot ini
+            let caption = `${header}
+🎮 *Info Pengguna*:
+> - 🧑‍💻 Nama: ${m.pushName}
+> - 🏷️ Tag: @${m.sender.split("@")[0]}
+> - 🎖️ Status: ${m.isOwner ? "Developer" : premium ? "Premium" : "Gratis"}
+> - ⚖️ Limit: ${m.isOwner ? "Tidak terbatas" : limit}
 
-┏━━[ *乂 Info User* ]
-┃ *- Nama :* ${m.pushName}
-┃ *- Tag :* @${m.sender.split("@")[0]}
-┃ *- Status :* ${m.isOwner ? "Developer bot" : premium ? "Premium" : "Gratisan"}
-┃  *- Limit :* ${m.isOwner ? "Unlimited" : limit}
-┗━━━━━━━━━━━━━━━━━━━━━━━
+🤖 *Info Bot*:
+> - 🏷️ Nama: ${pkg.name}
+> - 🔢 Versi: v${pkg.version}
+> - 🕰️ Waktu Aktif: ${Func.toDate(process.uptime() * 1000)}
+> - 🔑 Prefix: [ ${m.prefix} ]
+> - ⚡ Total perintah: ${cmd + alias + matches.length}
 
-┏━━[ *乂 Info - Bot* ]
-┃ *- Nama :* ${pkg.name}
-┃ *- Versi :* v${pkg.version}
-┃ *- Runtime :* ${Func.toDate(process.uptime() * 1000)}
-┃ *- Prefix :* [ ${m.prefix} ]
-┃ *- Total fitur :* ${cmd + alias + matches.length}
-┗━━━━━━━━━━━━━━━━━━━━━━━
-> *\`- Source code :\`* https://github.com/AxellNetwork/NekoBot
+─────────────────────────
+🗂️ *Daftar Menu*:
+> *(all)* ${m.prefix}menu all
+${list.map((a) => `> *(${a})* ${m.prefix}menu ${a}`).join("\n")}
 
-> *- Fitur Limit :* [L]
-> *- Fitur Premium :* [P]
+─────────────────────────
+`;
 
-☎️ Jika menemukan bug pada bot ini bisa langsung hubungi owner bot
+            caption += footer;
 
-┏━━[ *乂 L i s t - M e n u* ]
-┃${m.prefix}menu all
-${list.map((a) => `┃${m.prefix}menu ${a}`).join("\n")} 
-┗━━━━━━━━━━━━━━━━━━━━━━━
-
-> © Developed by AxellNetwork\n> Powered by @⁨WhatsApp⁩`;
             m.reply({
-                video: {
-                    url: "https://files.catbox.moe/9z9y4g.mp4"
-                },
-                caption,
-                mentions: [m.sender],
-                gifPlayback: true,
-                footer: config.name,
+                text: caption,
                 contextInfo: {
-                    mentionedJid: [m.sender]
-                }
+                    mentionedJid: sock.parseMention(caption),
+                    externalAdReply: {
+                        title: "© NekoBot | Playground",
+                        body: "👨‍💻 Bot WhatsApp - Simple",
+                        mediaType: 1,
+                        sourceUrl: "https://whatsapp.com/channel/0029Vb0YWvYJ3jusF2nk9U1P",
+                        thumbnailUrl: "https://files.catbox.moe/yupd7z.jpg",
+                        renderLargerThumbnail: true,
+                    },
+                },
             });
         }
     },

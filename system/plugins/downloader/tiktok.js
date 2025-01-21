@@ -1,21 +1,4 @@
-/**
-> *[ Fitur Plugin TiktokFix ]*
-
-> < ! > Warning
-> Scrape: https://github.com/FrankXz12/Skrep-Dan-Fitur/blob/main/Skrep-ttsave.js
-
-> Type Cjs
-> *[ Script ]*
-> https://github.com/AxellNetwork/NekoBot
-> https://devuploads.com/vhaofww2sujx
-> Source
-> Ch1
-> https://whatsapp.com/channel/0029VadFS3r89inc7Jjus03W
-> Ch2
-> https://whatsapp.com/channel/0029VateyJuKWEKhJMRKEL20
-**/
-
-let deku = async (m, {
+let neko = async (m, {
     sock,
     Func,
     Scraper,
@@ -24,78 +7,55 @@ let deku = async (m, {
     text,
     config
 }) => {
-
-    if (!text.includes('tiktok')) return m.reply('link tiktok mana bang!?')
+    if (!text.includes('tiktok')) return m.reply('❌ *Link TikTok tidak ditemukan! Masukkan link yang valid.*');
 
     await Scraper.ttsave.video(text).then(async (a) => {
-        let deku = `*⏤͟͟͞͞╳ [ Tiktok - Downloader ]*\n`
-        deku += `> ⏤͟͟͞͞╳ *Nama:* ${a.nickname}\n`
-        deku += `> ⏤͟͟͞͞╳ *Username:* ${a.username}\n`
-        deku += `> ⏤͟͟͞͞╳ *Usernameid:* ${a.uniqueId}\n`
-        deku += `> ⏤͟͟͞͞╳ *Views:* ${a.stats.plays}\n`
-        deku += `> ⏤͟͟͞͞╳ *Like:* ${a.stats.likes}\n`
-        deku += `> ⏤͟͟͞͞╳ *Komentar:* ${a.stats.comments}\n`
-        deku += `> ⏤͟͟͞͞╳ *Bagi:* ${a.stats.shares}\n`
-        deku += `⏤͟͟͞͞╳ `
+        const caption = `*– 乂 TikTok - Downloader 🎥*\n`;
+        caption += `> 📛 *Nama:* ${a.nickname}\n`;
+        caption += `> 🧑‍💻 *Username:* ${a.username}\n`;
+        caption += `> 🆔 *Username ID:* ${a.uniqueId}\n`;
+        caption += `> 👁️ *Views:* ${a.stats.plays}\n`;
+        caption += `> ❤️ *Likes:* ${a.stats.likes}\n`;
+        caption += `> 💬 *Komentar:* ${a.stats.comments}\n`;
+        caption += `> 🔄 *Bagikan:* ${a.stats.shares}\n`;
+        caption += `⏤͟͟͞͞╳`;
 
         sock.sendMessage(m.cht, {
             image: {
                 url: a.profilePic
             },
-            caption: Func.Styles(deku)
+            caption
         }, {
             quoted: m
-        })
+        });
 
         if (a.dlink.nowm) {
-            let dekuu = `*⏤͟͟͞͞╳ [ Tiktok - Downloader ]*\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Nama:* ${a.nickname}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Username:* ${a.username}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Usernameid:* ${a.uniqueId}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Views:* ${a.stats.plays}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Like:* ${a.stats.likes}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Komentar:* ${a.stats.comments}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Bagi:* ${a.stats.shares}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *type:* ${a.type}\n`
-            dekuu += `⏤͟͟͞͞╳ `
-
             await sock.sendMessage(m.cht, {
                 video: {
                     url: a.dlink.nowm
                 },
-                caption: Func.Styles(deku)
+                caption
             }, {
                 quoted: m
-            })
+            });
         } else if (a.slides) {
-            let dekuu = `*⏤͟͟͞͞╳ [ Tiktok - Downloader ]*\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Nama:* ${a.nickname}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Username:* ${a.username}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Usernameid:* ${a.uniqueId}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Views:* ${a.stats.plays}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Like:* ${a.stats.likes}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Komentar:* ${a.stats.comments}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *Bagi:* ${a.stats.shares}\n`
-            dekuu += `> ⏤͟͟͞͞╳ *type:* ${a.type}\n`
-            dekuu += `⏤͟͟͞͞╳ `
-
             for (let i of a.slides) {
                 await sock.sendMessage(m.cht, {
                     image: {
                         url: i.url
                     },
-                    caption: Func.Styles(deku)
+                    caption
                 }, {
                     quoted: m
-                })
+                });
             }
         }
     });
-    Scraper.ttsave.mp3(text).then(async (u) => {
 
+    Scraper.ttsave.mp3(text).then(async (u) => {
         const contextInfo = {
             mentionedJid: [m.sender],
-            isForwarded: !0,
+            isForwarded: true,
             forwardingScore: 127,
             externalAdReply: {
                 title: `${Func.Styles(`${u.songTitle}`)}`,
@@ -105,7 +65,7 @@ let deku = async (m, {
                 sourceUrl: u.audioUrl,
                 renderLargerThumbnail: true
             }
-        }
+        };
 
         await sock.sendMessage(m.cht, {
             audio: {
@@ -115,17 +75,17 @@ let deku = async (m, {
             contextInfo
         }, {
             quoted: m
-        })
-    })
-}
+        });
+    });
+};
 
-deku.command = "tiktok"
-deku.alias = ["tt", "ttdl", "tiktokdl"]
-deku.category = ["downloader"]
-deku.settings = {
+neko.command = "tiktok";
+neko.alias = ["tt", "ttdl", "tiktokdl"];
+neko.category = ["downloader"];
+neko.settings = {
     limit: true
-}
-deku.description = "Download video/slide dari tiktok"
-deku.loading = true
+};
+neko.description = "📥 Download video atau slide dari TikTok.";
+neko.loading = true;
 
-module.exports = deku
+module.exports = neko;

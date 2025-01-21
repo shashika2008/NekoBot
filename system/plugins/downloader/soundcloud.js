@@ -1,12 +1,12 @@
 class Command {
     constructor() {
-        this.command = "soundclound";
+        this.command = "soundcloud";
         this.alias = ["sound", "scloud"];
         this.category = ["downloader"];
         this.settings = {
             limit: true,
         };
-        this.description = "Mencari dan download music dari Soundclound !";
+        this.description = "🎵 Mencari dan mengunduh musik dari SoundCloud!";
         this.loading = true;
     }
     run = async (m, {
@@ -17,36 +17,43 @@ class Command {
         store,
         text
     }) => {
-        if (!text) throw "> Masukan Pencarian/Link dari SoundClound";
+        if (!text) throw `*– 乂 Cara Penggunaan 🎶*\n\n` +
+            `> Masukkan kata kunci untuk mencari musik\n` +
+            `> Masukkan URL SoundCloud untuk mengunduh musik\n\n` +
+            `*– 乂 Contoh Penggunaan 📋*\n` +
+            `> ${m.prefix}soundcloud Imagine Dragons\n` +
+            `> ${m.prefix}soundcloud https://soundcloud.com/artist-name/track-name`;
+
         if (Func.isUrl(text)) {
-            if (!/soundcloud.com/.test(text)) throw "> Masukan link SoundClound !";
+            if (!/soundcloud.com/.test(text)) throw `> *❌ Masukkan URL SoundCloud yang valid!*`;
+            
             let data = await Scraper.soundcloud.download(text);
             if (!data.download) throw Func.jsonFormat(data);
-            let cap = "*– 乂 SoundClound - Download*\n\n";
+
+            let cap = `*– 乂 SoundCloud - Downloader 🎵*\n\n`;
             cap += Object.entries(data)
-                .map(([a, b]) => `> *- ${a} :* ${b}`)
+                .map(([a, b]) => `> *🎧 ${a.capitalize()} :* ${b}`)
                 .join("\n");
 
-            m.reply(cap).then((a) => {
-                sock.sendFile(
-                    m.cht,
-                    data.download,
-                    data.title,
-                    "> Jika Yang muncul adalah dokumen silahkan download manual Untuk mendengar music\n\n> *Tekan Tombol Unduh diatas*",
-                    a, {
-                        mimetype: "audio/mpeg",
-                    },
-                );
+            m.reply(cap).then(() => {
+               m.reply({
+                  audio: {
+                     url: data.download
+                  },
+                 mimetype: "audio/mpeg"
+               })
             });
         } else {
             let data = await Scraper.soundcloud.search(text);
-            if (data.length === 0) throw "> Music tidak di temukan";
-            let cap =
-                "*– 乂  SoundClound - Sesrch*\n> Pilih lagu yang ingin kamu download !\n\n";
-            for (let i of data) {
-                cap += `> *- Title :* ${i.title}\n`;
-                cap += `> *- Url :* ${i.url}\n\n`;
-            }
+            if (data.length === 0) throw `> *❌ Musik tidak ditemukan!*`;
+
+            let cap = `*– 乂 SoundCloud - Pencarian 🔎*\n\n` +
+                `> Pilih lagu yang ingin kamu unduh!\n\n`;
+            cap += data.map(i => 
+                `> *🎵 Judul :* ${i.title}\n` +
+                `> *🔗 URL :* ${i.url}`
+            ).join("\n\n");
+
             m.reply(cap);
         }
     };

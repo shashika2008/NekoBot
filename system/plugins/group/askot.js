@@ -8,19 +8,12 @@ class Command {
         this.settings = {
             group: true,
         };
-        this.description = "> Melihat semua asal negara member ini";
+        this.description = "📊 Menampilkan informasi asal negara semua member di grup";
         this.loading = true;
     }
-    run = async (m, {
-        sock,
-        Func,
-        Scraper,
-        config,
-        store
-    }) => {
-        let regionNames = new Intl.DisplayNames(["en"], {
-            type: "region",
-        });
+
+    run = async (m, { sock, Func, Scraper, config, store }) => {
+        let regionNames = new Intl.DisplayNames(["en"], { type: "region" });
         let data = m.metadata;
         let participants = data.participants;
 
@@ -40,30 +33,30 @@ class Command {
             total: countryMembers[country].length,
             jid: countryMembers[country],
         }));
-        let totalSum = countryCounts.reduce(
-            (acc, country) => acc + country.total,
-            0,
-        );
+        let totalSum = countryCounts.reduce((acc, country) => acc + country.total, 0);
         let totalRegion = Object.keys(countryMembers).length;
-        let hasil = countryCounts.map(({
-            name,
-            total,
-            jid
-        }) => ({
+        let hasil = countryCounts.map(({ name, total, jid }) => ({
             name,
             total,
             jid,
             percentage: ((total / totalSum) * 100).toFixed(2) + "%",
         }));
 
-        let cap = `*– 乂 Info - Member*\n`;
-        cap += `> *- Subject :* ${m.metadata.subject}\n`;
-        cap += `> *- Total Member :* ${m.metadata.participants.length}\n\n`;
-        cap += `*– 乂 List Region Member*\n`;
+        let cap = `*📍 Informasi Member Berdasarkan Wilayah*\n\n`;
+        cap += `> *📌 Nama Grup:* ${m.metadata.subject}\n`;
+        cap += `> *👥 Total Member:* ${m.metadata.participants.length}\n`;
+        cap += `> *🌎 Jumlah Wilayah Terdata:* ${totalRegion}\n\n`;
+        cap += `*🌐 Statistik Wilayah Member*\n`;
         cap += hasil
             .sort((b, a) => a.total - b.total)
-            .map((a) => `> *• Region :* ${a.name}\n> *• Total :* ${a.total}`)
+            .map(
+                (a, i) =>
+                    `🔹 *${i + 1}. Wilayah:* ${a.name || "Tidak Diketahui"}\n   ➡️ *Total:* ${a.total} anggota\n   ➡️ *Persentase:* ${a.percentage}`
+            )
             .join("\n\n");
+
+        cap += `\n📊 _Gunakan informasi ini untuk memahami lebih baik asal negara anggota grup._`;
+
         m.reply(cap);
     };
 }

@@ -7,7 +7,7 @@ module.exports = {
     settings: {
         limit: true,
     },
-    description: "Mencari/download musik dari Spotify",
+    description: "🎵 Mencari atau mengunduh musik dari Spotify!",
     loading: true,
     async run(m, {
         sock,
@@ -16,21 +16,21 @@ module.exports = {
         text
     }) {
         if (!text)
-            throw `> *乂 Cara Penggunaan :*
-> *-* Masukan Query untuk mencari video
-> *-* Masukan Url untuk mendownload musik
-
-> *乂 Contoh Penggunaan :*
-> *- ${m.prefix + m.command} Video lucu*
-> *- ${m.prefix + m.command} https://open.spotify.com/track/057YRaQ57p70MVg4hMIIkB*`;
+            throw `*– 乂 Cara Penggunaan 🎶*\n\n` +
+                `> *🔍 Masukkan kata kunci* untuk mencari musik\n` +
+                `> *🔗 Masukkan URL Spotify* untuk mengunduh musik\n\n` +
+                `*– 乂 Contoh Penggunaan 📋*\n` +
+                `> *${m.prefix + m.command} Imagine Dragons*\n` +
+                `> *${m.prefix + m.command} https://open.spotify.com/track/examplelink*`;
 
         if (/open.spotify.com/.test(text)) {
             let data = await Scraper.spotify.download(text);
-            let cap = "*– 乂 Spotify - Downloader*\n\n";
+            let cap = `*– 乂 Spotify - Downloader 🎵*\n\n`;
             cap += Object.entries(data)
-                .map(([a, b]) => `> *- ${a.capitalize()} :* ${b}`)
+                .map(([a, b]) => `> *🎧 ${a.capitalize()} :* ${b}`)
                 .join("\n");
-            m.reply(cap).then((a) => {
+
+            m.reply(cap).then(() => {
                 m.reply({
                     audio: {
                         url: data.download,
@@ -40,16 +40,18 @@ module.exports = {
             });
         } else {
             let data = await Scraper.spotify.search(text);
-            let cap = `*– 乂 Spotify - search*
-`;
-            cap += `> Ketik *${m.prefix + m.command} ${data[0].url}* untuk mendownload musik dari spotify\n\n`;
+            if (!data || data.length === 0) throw `> *❌ Musik tidak ditemukan!*`;
+
+            let cap = `*– 乂 Spotify - Pencarian 🔎*\n\n` +
+                `> Ketik *${m.prefix + m.command} [URL]* untuk mengunduh musik pilihanmu 🎶\n\n`;
             cap += data
                 .map((a) =>
                     Object.entries(a)
-                    .map(([b, c]) => `> *- ${b.capitalize()} :* ${c}`)
-                    .join("\n"),
+                        .map(([b, c]) => `> *🎵 ${b.capitalize()} :* ${c}`)
+                        .join("\n"),
                 )
                 .join("\n\n");
+
             m.reply(cap);
         }
     },

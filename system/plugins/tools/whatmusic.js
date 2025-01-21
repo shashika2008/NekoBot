@@ -1,40 +1,40 @@
 class Command {
     constructor() {
-        this.command = "whatmusic"
-        this.alias = []
-        this.category = ["tools"]
+        this.command = "whatmusic";
+        this.alias = [];
+        this.category = ["tools"];
         this.settings = {
-            limit: true
-        }
-        this.description = "> Mencari judul lagu berdasarkan media audio"
-        this.loading = true
+            limit: true,
+        };
+        this.description = "Cari judul lagu berdasarkan media audio yang kamu kirimkan!";
+        this.loading = true;
     }
-    run = async (m, {
-        sock,
-        Func,
-        Scraper,
-        config,
-        store
-    }) => {
-        let q = m.quoted ? m.quoted : m
-        if (!/audio/.test(q.msg.mimetype)) throw "> Balas audio yang ingin dicari judul nya"
-        let buffer = await q.download();
+
+    run = async (m, { Func }) => {
+        let target = m.quoted ? m.quoted : m;
+        if (!/audio/.test(target.msg.mimetype)) 
+            throw "⚠️ *Oops!* Harap balas pesan audio yang ingin dicari judul lagunya.";
+
+        let buffer = await target.download();
         let data = await whatmusic(buffer);
-        let cap = "*– 乂 What - Music*\n";
+
+        if (!data || data.length === 0) 
+            throw "❌ *Maaf!* Tidak dapat menemukan informasi lagu dari audio tersebut.";
+
+        let caption = `🎵 *What Music - Finder* 🎵\n\n`;
         for (let result of data) {
-            cap += `> *-* Title : ${result.title}\n`;
-            cap += `> *-* Artist : ${result.artist}\n`;
-            cap += `> *-* Duration : ${result.duration}\n`;
-            cap += `> *-* Source : `;
-            result.url.filter(x => x).forEach(i => cap += `\n> ${i}`);
-            cap += '\n';
+            caption += `🎶 *Judul:* ${result.title}\n`;
+            caption += `🎤 *Artis:* ${result.artist}\n`;
+            caption += `⏱️ *Durasi:* ${result.duration}\n`;
+            caption += `🔗 *Sumber:* ${result.url.filter(x => x).join("\n") || "Tidak ditemukan"}\n\n`;
         }
-        m.reply(cap);
-    }
+
+        caption += `💡 *Tips:* Kirim audio dengan kualitas yang jelas untuk hasil terbaik.`;
+        m.reply(caption);
+    };
 }
 
 module.exports = new Command();
-
 
 const acrcloud = require("acrcloud");
 
@@ -45,35 +45,30 @@ const acr = new acrcloud({
 });
 
 async function whatmusic(buffer) {
-    let data = (await acr.identify(buffer)).metadata;
-    if (!data.music) return res.error("Song data not found!");
-    let array = [];
-    array.push(
-        ...data?.music?.map((a) => ({
-            title: a.title,
-            artist: a.artists.map((a) => a.name)[0],
-            score: a.score,
-            release: new Date(a.release_date).toLocaleString("id-ID").split(",")[0].trim(),
-            duration: toTime(a.duration_ms),
-            url: Object.keys(a.external_metadata).map((i) =>
-                i === "youtube" ?
-                "https://youtu.be/" + a.external_metadata[i].vid :
-                i === "deezer" ?
-                "https://www.deezer.com/us/track/" +
-                a.external_metadata[i].track.id :
-                i === "spotify" ?
-                "https://open.spotify.com/track/" +
-                a.external_metadata[i].track.id :
-                "",
-            ),
-        })),
-    );
-    return array
+    let response = await acr.identify(buffer);
+    let metadata = response.metadata;
+    if (!metadata || !metadata.music) return [];
+
+    return metadata.music.map((song) => ({
+        title: song.title,
+        artist: song.artists.map((a) => a.name)[0],
+        score: song.score,
+        release: new Date(song.release_date).toLocaleDateString("id-ID"),
+        duration: toTime(song.duration_ms),
+        url: Object.keys(song.external_metadata).map((key) => 
+            key === "youtube"
+                ? "https://youtu.be/" + song.external_metadata[key].vid
+                : key === "deezer"
+                ? "https://www.deezer.com/us/track/" + song.external_metadata[key].track.id
+                : key === "spotify"
+                ? "https://open.spotify.com/track/" + song.external_metadata[key].track.id
+                : ""
+        ).filter(Boolean),
+    }));
 }
 
 function toTime(ms) {
-    let h = Math.floor(ms / 3600000);
-    let m = Math.floor(ms / 60000) % 60;
-    let s = Math.floor(ms / 1000) % 60;
-    return [m, s].map((v) => v.toString().padStart(2, 0)).join(":");
+    let minutes = Math.floor(ms / 60000) % 60;
+    let seconds = Math.floor(ms / 1000) % 60;
+    return [minutes, seconds].map((v) => v.toString().padStart(2, "0")).join(":");
 }

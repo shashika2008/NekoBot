@@ -7,14 +7,17 @@ module.exports = {
         admin: true,
         botAdmin: true,
     },
-    description: "Untuk mereset ulang link group",
-    async run(m, {
-        sock
-    }) {
-        await sock
-            .groupRevokeInvite(m.cht)
-            .then((a) =>
-                m.reply("> *- Link group baru :* https://chat.whatsapp.com/" + a),
+    description: "🔗 Mereset ulang link undangan grup",
+    async run(m, { sock }) {
+        try {
+            const newLink = await sock.groupRevokeInvite(m.cht);
+            m.reply(
+                `*✅ Link Grup Berhasil Direset!*\n\n> 🔗 *Link Baru:* https://chat.whatsapp.com/${newLink}\n\n📌 _Silakan bagikan link ini kepada anggota baru._`
             );
+        } catch (err) {
+            m.reply(
+                `*❌ Gagal Mereset Link!*\n\n> Pastikan bot memiliki hak admin untuk melakukan perubahan ini.`
+            );
+        }
     },
 };

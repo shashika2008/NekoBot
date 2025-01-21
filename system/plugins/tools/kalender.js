@@ -9,6 +9,7 @@ class Command {
         this.description = "Cek Hari libur tahun ini";
         this.loading = true;
     }
+
     run = async (m, {
         sock,
         Func,
@@ -17,37 +18,32 @@ class Command {
         store
     }) => {
         let array = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
         ];
         let now = new Date();
         let day = now.getDate();
         let month = array[now.getMonth()];
         let year = now.getFullYear();
+
         let data = await Scraper.libur(year);
         let image = `https://s.wincalendar.net/img/en/calendar/${day}-${month}-${year}.png`;
-        let cap = `*– 乂 Hari Libur tahun ${year}*\n`;
-        cap += data
-            .map((a, i) =>
-                Object.entries(a)
-                .map(([a, b]) => `> *- ${a.capitalize()} :* ${b}`)
-                .join("\n"),
-            )
-            .join("\n\n");
+
+        let cap = `*– 乂 Hari Libur Tahun ${year}* 📅\n`;
+        if (data && data.length > 0) {
+            cap += data
+                .map((a, i) =>
+                    Object.entries(a)
+                    .map(([a, b]) => `> *- ${a.capitalize()} :* ${b}`)
+                    .join("\n")
+                )
+                .join("\n\n");
+        } else {
+            cap += "> ❌ *Tidak ada data libur yang ditemukan.*";
+        }
+
         m.reply({
-            image: {
-                url: image,
-            },
+            image: { url: image },
             caption: cap,
         });
     };
