@@ -2,22 +2,6 @@ const os = require("node:os");
 const fs = require("node:fs");
 
 module.exports = {
-<<<<<<< HEAD
-    command: "ping",
-    alias: ["ping", "p"],
-    category: ["main"],
-    description: "Periksa Status bot",
-    loading: true,
-    async run(m, {
-        sock,
-        config,
-        Func
-    }) {
-        let start = performance.now(),
-            node = process.memoryUsage(),
-            info = await fetch("https://ipwho.is").then((a) => a.json()),
-            cap = `
-=======
   command: "ping",
   alias: ["ping", "p"],
   category: ["main"],
@@ -28,7 +12,6 @@ module.exports = {
       node = process.memoryUsage(),
       info = await fetch("https://ipwho.is").then((a) => a.json()),
       cap = `
->>>>>>> a81e5ef (Major update 🎉)
 ╭──[ *Informasi Bot* ]
 ᎒⊸ 🖥️ *Berjalan Di* : ${process.env.username === "root" ? "VPS" : process.env.username === "container" ? "HOSTING ( PANEL )" : process.env.username}
 ᎒⊸ ⏱️ *Uptime* : ${Func.toDate(process.uptime() * 1000)}
@@ -62,11 +45,6 @@ ${Object.entries(node)
   .join("\n")}
 ╰────────────•`;
 
-<<<<<<< HEAD
-        m.reply(cap);
-    },
-=======
     m.reply(cap);
   },
->>>>>>> a81e5ef (Major update 🎉)
 };
