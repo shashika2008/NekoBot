@@ -72,6 +72,7 @@ class Spotify {
         }
     };
 
+<<<<<<< HEAD
     download = async function dl(url) {
         try {
             const response = await axios
@@ -111,6 +112,46 @@ class Spotify {
                 msg: "Error Detected",
                 err: error.message,
             };
+=======
+    download = async (url) => {
+        const BASEURL = "https://api.fabdl.com";
+        const headers = {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36",
+        };
+
+        try {
+            const {
+                data: info
+            } = await axios.get(`${BASEURL}/spotify/get?url=${url}`, {
+                headers
+            });
+            const {
+                gid,
+                id,
+                name,
+                image,
+                duration_ms
+            } = info.result;
+
+            const {
+                data: download
+            } = await axios.get(`${BASEURL}/spotify/mp3-convert-task/${gid}/${id}`, {
+                headers
+            });
+            if (download.result.download_url) {
+                return {
+                    title: name,
+                    duration: duration_ms,
+                    cover: image,
+                    download: `${BASEURL}${download.result.download_url}`
+                }
+            }
+        } catch (error) {
+            console.error("Error downloading Spotify track:", error.message);
+            throw new Error(error.message);
+>>>>>>> a81e5ef (Major update 🎉)
         }
     };
     playlist = async function playlist(url) {

@@ -27,7 +27,11 @@
     "acrcloud": "^1.4.0",
     "async-lock": "^1.4.1",
     "awesome-phonenumber": "^7.2.0",
+<<<<<<< HEAD
     "baileys": "github:pst4r8/Baileys2023",
+=======
+    "baileys": "github:AxellNetwork/Baileys",
+>>>>>>> a81e5ef (Major update 🎉)
     "canvas": "^2.11.2",
     "chalk": "^4.1.2",
     "cheerio": "^1.0.0",
@@ -39,6 +43,10 @@
     "jimp": "^0.16.13",
     "js-beautify": "^1.15.1",
     "jsdom": "^25.0.1",
+<<<<<<< HEAD
+=======
+    "json5": "^2.2.3",
+>>>>>>> a81e5ef (Major update 🎉)
     "link-preview-js": "^3.0.12",
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.46",

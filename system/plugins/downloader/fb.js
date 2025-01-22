@@ -38,7 +38,11 @@ module.exports = {
 > Video ini memiliki ukuran *( ${size} )* yang melebihi batas yang ditentukan.
 > 🔓 *Upgrade ke Premium* untuk mendapatkan batas unduh hingga *1GB*.`
 
+<<<<<<< HEAD
 let cap `*– 乂 Informasi Video :*
+=======
+        let cap = `*– 乂 Informasi Video :*
+>>>>>>> a81e5ef (Major update 🎉)
 > 🎥 *Judul :* ${data.metadata.title}`;
 
         sock.sendFile(m.cht, buffer, null, cap, m);
