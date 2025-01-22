@@ -74,19 +74,15 @@ module.exports = {
   },
   description: "Menambahkan anggota ke grup",
   async run(m, { sock, text, Func }) {
-    const input = m.text || (m.quoted ? m.quoted.sender : m.mentions[0]);
+    const input = text ? text : m.quoted ? m.quoted.sender : m.mentions[0]
     if (!input) {
       throw "❗ *Format Salah*\nKirim perintah ini dengan format:\n> Ketik nomor pengguna yang ingin ditambahkan\n> Atau reply pesan pengguna dengan perintah ini.";
     }
 
     const p = await sock.onWhatsApp(input.trim());
-    if (p.length === 0) {
-      return m.reply(
-        "❌ Pengguna yang Anda masukkan tidak memiliki akun WhatsApp. Pastikan nomor sudah benar!",
-      );
-    }
-
-    const jid = sock.decodeJid(p[0].jid);
+    console.log(p);
+    if (!p[0].exists) throw "⚠️ Pengguna tidak terdaftar di WhatsApp"
+    const jid = p[0].jid
     const member = m.metadata.participants.find((u) => u.id === jid);
     if (member) {
       return m.reply("⚠️ Pengguna tersebut sudah menjadi anggota grup ini.");
