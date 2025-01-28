@@ -7,66 +7,72 @@ const yts = require("yt-search");
 const axios = require("axios");
 
 module.exports = {
-  command: "ytmp4",
-  alias: ["ytv", "playvid"],
-  category: ["downloader"],
-  settings: {
-    limit: true,
-  },
-  description: "Cari dan unduh video dari YouTube",
-  async run(m, { sock, Func, text }) {
-    if (!text) {
-      return m.reply(
-        `╭──[❌ *Masukkan Input yang Valid* ]
+    command: "ytmp4",
+    alias: ["ytv", "playvid"],
+    category: ["downloader"],
+    settings: {
+        limit: true,
+    },
+    description: "Cari dan unduh video dari YouTube",
+    async run(m, {
+        sock,
+        Func,
+        text
+    }) {
+        if (!text) {
+            return m.reply(
+                `╭──[❌ *Masukkan Input yang Valid* ]
 ᎒⊸ Ketik teks untuk mencari video YouTube, atau masukkan link YouTube yang valid.
 ᎒⊸ Contoh: *${m.prefix + m.command} Lathi* atau *${m.prefix + m.command} https://youtu.be/abc123*
 ╰────────────•`,
-      );
-    }
+            );
+        }
 
-    m.reply(`╭──[⏳ *Sedang Diproses* ]
+        m.reply(`╭──[⏳ *Sedang Diproses* ]
 ᎒⊸ *Mohon tunggu sebentar...*
 ╰────────────•`);
 
-    let isUrl = Func.isUrl(text);
-    let videoUrl;
+        let isUrl = Func.isUrl(text);
+        let videoUrl;
 
-    if (isUrl) {
-      videoUrl = isUrl[0];
-    } else {
-      let searchResult = await yts(text);
-      let randomVideo = searchResult.videos.getRandom();
-      if (!randomVideo) {
-        return m.reply(
-          `╭──[❌ *Hasil Tidak Ditemukan* ]
+        if (isUrl) {
+            videoUrl = isUrl[0];
+        } else {
+            let searchResult = await yts(text);
+            let randomVideo = searchResult.videos.getRandom();
+            if (!randomVideo) {
+                return m.reply(
+                    `╭──[❌ *Hasil Tidak Ditemukan* ]
 ᎒⊸ Tidak ada video ditemukan dengan kata kunci *"${text}"*. Coba gunakan kata kunci lain!
 ╰────────────•`,
-        );
-      }
-      videoUrl = randomVideo.url;
-    }
+                );
+            }
+            videoUrl = randomVideo.url;
+        }
 
-    let { data } = await axios
-      .get(`https://ytdl.axeel.my.id/api/download/video?url=${videoUrl}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      })
-      .catch((e) => e.response);
+        let {
+            data
+        } = await axios
+            .get(`https://ytdl.axeel.my.id/api/download/video?url=${videoUrl}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+            })
+            .catch((e) => e.response);
 
-    if (!data?.metadata) {
-      return m.reply(
-        `╭──[❌ *Terjadi Kesalahan* ]
+        if (!data?.metadata) {
+            return m.reply(
+                `╭──[❌ *Terjadi Kesalahan* ]
 ᎒⊸ Tidak dapat memproses permintaan Anda. Coba lagi nanti atau gunakan URL lain.
 ╰────────────•`,
-      );
-    }
+            );
+        }
 
-    let metadata = data.metadata;
-    metadata.thumbnail = metadata.thumbnail.url;
+        let metadata = data.metadata;
+        metadata.thumbnail = metadata.thumbnail.url;
 
-    let cap = `╭──[🎵 *YouTube - Video Downloader* ]
+        let cap = `╭──[🎵 *YouTube - Video Downloader* ]
  ${Object.entries(metadata)
    .map(([a, b]) => `᎒⊸ *${a.capitalize()}*       : ${b}`)
    .join("\n")}
@@ -79,24 +85,25 @@ module.exports = {
 🔗 *Link Video*: ${videoUrl}
 © Simple WhatsApp Bot by AxellNetwork`;
 
-    sock
-      .sendMessage(
-        m.cht,
-        {
-          image: { url: metadata.thumbnail },
-          caption: cap,
-        },
-        { quoted: m },
-      )
-      .then((sent) => {
-        sock.sendMessage(
-          m.cht,
-          {
-            audio: data.downloads,
-            mimetype: "audio/mpeg",
-          },
-          { quoted: sent },
-        );
-      });
-  },
+        sock
+            .sendMessage(
+                m.cht, {
+                    image: {
+                        url: metadata.thumbnail
+                    },
+                    caption: cap,
+                }, {
+                    quoted: m
+                },
+            )
+            .then((sent) => {
+                sock.sendMessage(
+                    m.cht, {
+                        video: data.downloads,
+                    }, {
+                        quoted: sent
+                    },
+                );
+            });
+    },
 };

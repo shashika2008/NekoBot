@@ -1,3 +1,7 @@
+const {
+    fetch
+} = require("undici");
+
 class Command {
     constructor() {
         this.command = "soundcloud";
@@ -33,19 +37,31 @@ class Command {
 
             let data = await Scraper.soundcloud.download(text);
             if (!data.download) throw Func.jsonFormat(data);
-
+            let buffer = await fetch(data.download);
             let cap = `*– 乂 SoundCloud - Downloader 🎵*\n\n`;
             cap += Object.entries(data)
                 .map(([a, b]) => `> *🎧 ${a.capitalize()} :* ${b}`)
                 .join("\n");
 
-            m.reply(cap)
-            await sock.sendMessage(m.cht, {
-                audio: await Func.fetchBuffer(data.download),
-                mimetype: "audio/mpeg",
+            sock.sendMessage(m.cht, {
+                image: {
+                    url: data.thumbnail
+                },
+                caption: cap
             }, {
                 quoted: m
-            });
+            }).then((msg) => {
+                setTimeout(() => {
+                    sock.sendMessage(m.cht, {
+                        audio: {
+                            url: data.download
+                        },
+                        mimetype: "audio/mpeg",
+                    }, {
+                        quoted: msg
+                    });
+                }, 4000);
+            })
         } else {
             let data = await Scraper.soundcloud.search(text);
             if (data.length === 0) throw `> *❌ Musik tidak ditemukan!*`;

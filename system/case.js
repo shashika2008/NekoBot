@@ -37,23 +37,31 @@ module.exports = async (m,
             } = require("child_process");
             const fs = require("fs");
             const path = require("path");
+
             let input = m.isQuoted ? m.quoted.body : text;
-            if (!input) return m.reply("> Reply/Masukan pessn");
+            if (!input) return m.reply("> Reply/Masukan pesan");
             m.reply(config.messages.wait);
+
             if (m.text.includes("--animated")) {
                 let txt = input.replace("--animated", "").trim().split(" ");
-                let array = []
+                let array = [];
+                let tmpDirBase = path.resolve(`./tmp/brat_${Date.now()}`);
+
+                fs.mkdirSync(tmpDirBase, {
+                    recursive: true
+                })
                 for (let i = 0; i < txt.length; i++) {
                     let word = txt.slice(0, i + 1).join(" ");
-                    let media = await axios.get(`https://aqul-brat.hf.space/api/brat?text=${encodeURIComponent(word)}`, {
+                    let media = (await axios.get(`https://aqul-brat.hf.space/api/brat?text=${encodeURIComponent(word)}`, {
                         responseType: 'arraybuffer'
-                    }).then((a) => a.data);
-                    let tmpDir = path.resolve(`./tmp/brat_${i}-${Date.now()}.mp4`);
+                    })).data;
+                    let tmpDir = path.resolve(`${tmpDirBase}/brat_${i}.mp4`);
                     fs.writeFileSync(tmpDir, media);
                     array.push(tmpDir);
                 }
-                let fileTxt = path.resolve(`./tmp/cmd-${Date.now()}.txt`);
-                let content = ""
+
+                let fileTxt = path.resolve(`${tmpDirBase}/cmd.txt`);
+                let content = "";
                 for (let i = 0; i < array.length; i++) {
                     content += `file '${array[i]}'\n`;
                     content += `duration 0.5\n`;
@@ -61,38 +69,40 @@ module.exports = async (m,
                 content += `file '${array[array.length - 1]}'\n`;
                 content += `duration 3\n`;
                 fs.writeFileSync(fileTxt, content);
-                let output = path.resolve(`./tmp/output-${Date.now()}.mp4`);
+
+                let output = path.resolve(`${tmpDirBase}/output.mp4`);
                 execSync(`ffmpeg -y -f concat -safe 0 -i ${fileTxt} -vf "fps=30" -c:v libx264 -preset veryfast -pix_fmt yuv420p -t 00:00:10 ${output}`);
                 let sticker = await writeExif({
                     mimetype: "video",
-                    data: fs.readFileSync(output),
+                    data: fs.readFileSync(output)
                 }, {
                     packName: config.sticker.packname,
-                    packPublish: config.sticker.author,
+                    packPublish: config.sticker.author
                 });
-                fs.unlinkSync(output);
-                fs.unlinkSync(fileTxt);
+                fs.rmSync(tmpDirBase, {
+                    recursive: true,
+                    force: true
+                });
                 await m.reply({
                     sticker
                 });
             } else {
-                let media = await axios.get(`https://aqul-brat.hf.space/api/brat?text=${encodeURIComponent(text)}`, {
+                let media = (await axios.get(`https://aqul-brat.hf.space/api/brat?text=${encodeURIComponent(input)}`, {
                     responseType: 'arraybuffer'
-                }).then((a) => a.data);
+                })).data;
                 let sticker = await writeExif({
                     mimetype: "image",
-                    data: media,
+                    data: media
                 }, {
                     packName: config.sticker.packname,
-                    packPublish: config.sticker.author,
-                }, );
-
+                    packPublish: config.sticker.author
+                });
                 await m.reply({
                     sticker
                 });
             }
         }
-        break
+        break;
         case "daftar": {
             let user = db.list().user[m.sender];
             if (user.register) return m.reply("> 🎉 Kamu sudah terdaftar!");

@@ -266,6 +266,7 @@
     }
 
     sock.ev.on("messages.upsert", async (cht) => {
+      console.log(cht);
       if (cht.messages.length === 0) return;
       const chatUpdate = cht.messages[0];
       if (!chatUpdate.message) return;
