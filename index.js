@@ -146,24 +146,23 @@
       const { connection, lastDisconnect } = update;
       if (connection === "close") {
         const reason = new Boom(lastDisconnect?.error)?.output.statusCode;
-        console.log(chalk.red.bold("Koneksi ditutup karena: "), lastDisconnect.error);
         if (lastDisconnect.error == "Error: Stream Errored (unknown)") {
-          process.exit(0);
+          
         } else if (reason === DisconnectReason.badSession) {
           console.log(
             chalk.red.bold("File sesi buruk, Harap hapus sesi dan scan ulang"),
           );
-          process.exit(0);
+          
         } else if (reason === DisconnectReason.connectionClosed) {
           console.log(
             chalk.yellow.bold("Koneksi ditutup, sedang mencoba untuk terhubung kembali..."),
           );
-          process.exit(0);
+
         } else if (reason === DisconnectReason.connectionLost) {
           console.log(
             chalk.yellow.bold("Koneksi hilang, mencoba untuk terhubung kembali..."),
           );
-          process.exit(0);
+          
         } else if (reason === DisconnectReason.connectionReplaced) {
           console.log(
             chalk.green.bold("Koneksi diganti, sesi lain telah dibuka. Harap tutup sesi yang sedang berjalan."),
