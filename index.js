@@ -115,17 +115,8 @@
         auth: state,
         version: [2, 3000, 1019441105],
         browser: Browsers.ubuntu("Edge"),
-        getMessage: async (key) => {
-          const jid = jidNormalizedUser(key.remoteJid);
-          const msg = await store.loadMessage(jid, key.id);
-          return msg?.message || "";
-        },
-        shouldSyncHistoryMessage: (msg) => {
-          console.log(`\x1b[32mMemuat chat [${msg.progress}%]\x1b[39m`);
-          return !!msg.syncType;
-        },
       },
-      store,
+      store,    
     );
     store.bind(sock.ev);
     if (!sock.authState.creds.registered) {
@@ -265,14 +256,13 @@
     }
 
     sock.ev.on("messages.upsert", async (cht) => {
-      console.log(cht);
       if (cht.messages.length === 0) return;
       const chatUpdate = cht.messages[0];
       if (!chatUpdate.message) return;
       const userId = chatUpdate.key.id;
       global.m = await serialize(chatUpdate, sock, store);     
-      require("./lib/logger.js")(m);      
       if (m.isBot) return;
+      require("./lib/logger.js")(m);      
       if (!m.isOwner && db.list().settings.self) return;
       await require("./system/handler.js")(m, sock, store);
     });

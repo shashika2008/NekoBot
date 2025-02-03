@@ -31,6 +31,15 @@ module.exports = async (m,
 ) => {
     const quoted = m.isQuoted ? m.quoted : m;
     switch (m.command) {
+        case "rvo":
+        case "readviewonce": {
+            if (!m.quoted) return m.reply("📝 Balas media dengan satu kali lihat");
+            let messages = m.quoted
+            if (!messages.msg.viewOnce) return m.reply("❌ Itu bukan pesan sekali liat !");
+            delete messages.msg.viewOnce
+            sock.copyNForward(m.cht, messages);
+        }
+        break
         case "brat": {
             const {
                 execSync
